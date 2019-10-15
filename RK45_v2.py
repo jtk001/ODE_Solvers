@@ -150,7 +150,7 @@ class RKF45():
     
     def solve_ivp(self):
         '''
-        This is the only public method for this class. Class this after 
+        This is the only public method for this class. Call this after 
         instantiation to solve the ivp.
         '''
         h = self.step_size
