@@ -167,7 +167,10 @@ class RKF45():
                 if j > self.max_iter:
                     print('time step not converged, advancing to t = {} anyway'.format(str(t_next)))
                     break
-            print('Solution advanced to t = {}'.format(str(t_next)))
+            if t_next > self.tinf:
+                h = self.tinf - t
+                y_next,t_next,err = self._compute_next_step(t,y,h)
+            print('Solution advanced to t = {}'.format(str(t_next)))    
             self.y.append(y_next)
             self.times.append(t_next)
             self.error.append(err)
