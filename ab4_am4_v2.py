@@ -60,7 +60,7 @@ class AB4AM4():
         t = self.t0
         y = self.y0
         self.history.append(self._rhs_eval(t,y)) #f(t0,y0)
-        for _ in range(2): #perform 2 rk4 steps to build solution history -> will have 3 past f evaluations
+        for _ in range(3): #perform 3 rk4 steps to build solution history -> will have 3 past f evaluations and the current
             t_next = t + h
             y_next = self._rk4_step(t,y)
             self.y.append(y_next)
@@ -80,8 +80,6 @@ class AB4AM4():
         
     def _ab4_step(self,t,y):
         h = self.step_size
-        f_curr = self._rhs_eval(t,y) # evaluate rhs at current solution point
-        self.history.append(f_curr)
         rel_history = np.array(self.history[-1:-5:-1])
         coeff = self.ab4_coeff[:,np.newaxis]
         int_approx = np.sum(coeff*rel_history,axis=0)
@@ -103,7 +101,7 @@ class AB4AM4():
     
     def solve_ivp(self):
         h = self.step_size
-        t,y = self._kickstart() #build history with 2 rk4 steps
+        t,y = self._kickstart() #build history with 3 rk4 steps
         while t < self.tinf:
             t_next = t + h
             y_pred = self._ab4_step(t,y) #predictor for t_next
@@ -121,6 +119,7 @@ class AB4AM4():
                 
             self.y.append(y_corr)
             self.times.append(t_next)
+            self.history.append(self._rhs_eval(t_next,y_corr))
             y = y_corr
             t = t_next
             
